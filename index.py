@@ -1,9 +1,5 @@
 import google.generativeai as genai
 import gradio as gr
-from PIL import Image
-from dotenv import load_dotenv
-import os
-
 
 def recognize_handwriting(image, api_key):
     genai.configure(api_key=api_key)
@@ -42,7 +38,7 @@ view = gr.Interface(
     inputs=[gr.Image(type="pil"),gr.Textbox(label="Gemini API key:")],
     outputs=[gr.Markdown(label = "Response:")],
     title="Handwriting Recognition with Gemini",
-    description="Upload an image of handwritten text and get the recognized text."
+    description= "Upload an image of handwritten text and get the recognized text. After that, check your markdown file in your folder for the extracted text."
 )
-if __name__ == '__main__':
+if __name__ == '__main__':  
     view.launch(share=True)
