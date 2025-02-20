@@ -50,6 +50,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ghcr.io/${{ github.repository | toLowerCase }}:latest
           platforms: linux/amd64
           
