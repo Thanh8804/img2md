@@ -41,6 +41,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Convert repository name to lowercase
+        id: convert_repo_name
+        run: echo "##[set-output name=repo_name;]$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -50,6 +53,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository | toLowerCase }}:latest
+          tags: ${{ env.REGISTRY }}/${{ steps.convert_repo_name.outputs.repo_name }}:latest
           platforms: linux/amd64
           
