@@ -83,7 +83,7 @@ with gr.Blocks(title="Handwriting Recognition") as view:
         with gr.Column():
             # Output markdown
             gr.Markdown("Response")
-            output_markdown = gr.Markdown(label="Response", container=True, show_label=True )
+            output_markdown = gr.Markdown(label="Response", container=True, show_label=True, line_breaks=True)
     # Set up the event handler with unpacked image inputs
     submit_btn.click(
         fn=recognize_formula,
