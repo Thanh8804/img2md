@@ -49,7 +49,6 @@ jobs:
       - name: Setup Appwrite CLI
         uses: appwrite/setup-for-appwrite@v1
         with:
-          method: key
           endpoint: ${{ secrets.APPWRITE_ENDPOINT }}
           project: ${{ secrets.APPWRITE_PROJECT_ID }}
           key: ${{ secrets.APPWRITE_API_KEY }}
