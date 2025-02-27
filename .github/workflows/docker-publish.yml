@@ -52,7 +52,7 @@ jobs:
 
       - name: Login to Appwrite
         run:
-          appwrite client --endpoint ${{ vars.APPWRITE_ENDPOINT }} --project ${{ vars.APPWRITE_PROJECT_ID }} --key ${{ vars.APPWRITE_API_KEY }}
+          appwrite client --endpoint ${{ vars.APPWRITE_ENDPOINT }} --project-id ${{ vars.APPWRITE_PROJECT_ID }} --key ${{ vars.APPWRITE_API_KEY }}
 
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
