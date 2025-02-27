@@ -48,11 +48,6 @@ jobs:
       # Set up the Appwrite CLI in the workflow
       - name: Setup Appwrite CLI
         uses: appwrite/setup-for-appwrite@v1
-        with:
-          method: key
-          endpoint: ${{ vars.APPWRITE_ENDPOINT }}
-          project: ${{ vars.APPWRITE_PROJECT_ID }}
-          key: ${{ vars.APPWRITE_API_KEY }}
         run:
           appwrite client --endpoint ${{ vars.APPWRITE_ENDPOINT }} --projectId ${{ vars.APPWRITE_PROJECT_ID }} --key ${{ vars.APPWRITE_API_KEY }}
 
