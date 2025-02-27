@@ -46,6 +46,10 @@ jobs:
         run: echo "##[set-output name=repo_name;]$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
 
       # Set up the Appwrite CLI in the workflow
+      - name: Install Appwrite CLI
+        run: |
+          curl -sL https://appwrite.io/cli/install.sh | bash
+          
       - name: Setup Appwrite CLI
         uses: appwrite/setup-for-appwrite@v1
         run:
