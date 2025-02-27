@@ -49,7 +49,6 @@ jobs:
       - name: Install Appwrite CLI
         run: |
           curl -sL https://appwrite.io/cli/install.sh | bash
-          appwrite version
 
       - name: Login to Appwrite
         run: |
