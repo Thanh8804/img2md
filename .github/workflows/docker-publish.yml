@@ -49,10 +49,11 @@ jobs:
       - name: Setup Appwrite CLI
         uses: appwrite/setup-for-appwrite@v1
         with:
+          locale:'Vietnam' 
           endpoint: ${{ secrets.APPWRITE_ENDPOINT }}
           project: ${{ secrets.APPWRITE_PROJECT_ID }}
           key: ${{ secrets.APPWRITE_API_KEY }}
-          
+
       - name: Login to Appwrite
         run: appwrite login --endpoint ${{ secrets.APPWRITE_ENDPOINT }} --project ${{ secrets.APPWRITE_PROJECT_ID }} --key ${{ secrets.APPWRITE_API_KEY }}
 
