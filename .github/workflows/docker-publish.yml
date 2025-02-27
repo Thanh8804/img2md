@@ -50,12 +50,19 @@ jobs:
         run: |
           curl -sL https://appwrite.io/cli/install.sh | bash
 
-      - name: Login to Appwrite
+
+      - name: Set up Appwrite client
+        run: appwrite client --endpoint "${{ secrets.APPWRITE_ENDPOINT }}"
+
+      - name: Initialize Appwrite Project
+        env:
+          APPWRITE_PROJECT: ${{ secrets.APPWRITE_PROJECT_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
         run: |
-          appwrite login \
-            --endpoint ${{ secrets.APPWRITE_ENDPOINT }} \
-            --project ${{ secrets.APPWRITE_PROJECT_ID }} \
-            --key ${{ secrets.APPWRITE_API_KEY }}
+          appwrite init \
+            --project="$APPWRITE_PROJECT" \
+            --key="$APPWRITE_API_KEY"
+
 
       - name: Initialize Appwrite Project
         run: appwrite init
