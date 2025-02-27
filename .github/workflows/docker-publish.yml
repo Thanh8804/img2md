@@ -53,6 +53,8 @@ jobs:
           endpoint: ${{ vars.APPWRITE_ENDPOINT }}
           project: ${{ vars.APPWRITE_PROJECT_ID }}
           key: ${{ vars.APPWRITE_API_KEY }}
+        run:
+          appwrite client --endpoint ${{ vars.APPWRITE_ENDPOINT }} --projectId ${{ vars.APPWRITE_PROJECT_ID }} --key ${{ vars.APPWRITE_API_KEY }}
 
       - name: Login to Appwrite
         run: appwrite login --endpoint ${{ secrets.APPWRITE_ENDPOINT }} --project ${{ secrets.APPWRITE_PROJECT_ID }} --key ${{ secrets.APPWRITE_API_KEY }}
