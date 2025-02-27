@@ -52,7 +52,12 @@ jobs:
           endpoint: ${{ secrets.APPWRITE_ENDPOINT }}
           project: ${{ secrets.APPWRITE_PROJECT_ID }}
           key: ${{ secrets.APPWRITE_API_KEY }}
+          
+      - name: Login to Appwrite
+        run: appwrite login --endpoint ${{ secrets.APPWRITE_ENDPOINT }} --project ${{ secrets.APPWRITE_PROJECT_ID }} --key ${{ secrets.APPWRITE_API_KEY }}
 
+      - name: Initialize Appwrite Project
+        run: appwrite init
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
