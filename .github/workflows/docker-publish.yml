@@ -46,16 +46,17 @@ jobs:
         run: echo "##[set-output name=repo_name;]$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
 
       # Set up the Appwrite CLI in the workflow
-      - name: Setup Appwrite CLI
-        uses: appwrite/setup-for-appwrite@v1
-        with:
-          method: key
-          project: ${{ secrets.APPWRITE_PROJECT_ID }}
-          key: ${{ secrets.APPWRITE_API_KEY }}
-          self_signed: true
+      - name: Install Appwrite CLI
+        run: |
+          curl -sL https://appwrite.io/cli/install.sh | bash
+          appwrite version
 
       - name: Login to Appwrite
-        run: appwrite login --endpoint ${{ secrets.APPWRITE_ENDPOINT }} --project ${{ secrets.APPWRITE_PROJECT_ID }} --key ${{ secrets.APPWRITE_API_KEY }}
+        run: |
+          appwrite login \
+            --endpoint ${{ secrets.APPWRITE_ENDPOINT }} \
+            --project ${{ secrets.APPWRITE_PROJECT_ID }} \
+            --key ${{ secrets.APPWRITE_API_KEY }}
 
       - name: Initialize Appwrite Project
         run: appwrite init
