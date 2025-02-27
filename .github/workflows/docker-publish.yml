@@ -49,10 +49,11 @@ jobs:
       - name: Setup Appwrite CLI
         uses: appwrite/setup-for-appwrite@v2
         with:
+          method: key
           endpoint: ${{ secrets.APPWRITE_ENDPOINT }}
           project: ${{ secrets.APPWRITE_PROJECT_ID }}
           key: ${{ secrets.APPWRITE_API_KEY }}
-          
+
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
