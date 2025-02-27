@@ -32,10 +32,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into github registry 
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
