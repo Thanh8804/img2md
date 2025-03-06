@@ -83,7 +83,7 @@ jobs:
             exit 1
           fi
 
-    -  name: Comment PR with Deployment URL
+      - name: Comment PR with Deployment URL
         uses: mshick/add-pr-comment@v2
         with:
           message: "🚀 PR Deployed: [View Deployment](http://${{ env.deploy_url }})"
