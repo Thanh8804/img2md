@@ -8,8 +8,6 @@ name: Docker
 on:
   pull_request:
     branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -32,7 +30,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into github registry 
@@ -63,4 +61,30 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ steps.convert_repo_name.outputs.repo_name }}/pr-${{ github.event.pull_request.number }}:latest
           platforms: linux/amd64
+    
+      - name: Deploy to Appwrite
+        id: deploy
+        run: |
+          RESPONSE=$(curl -s -X POST "https://67c6ca3b536c2f355774.appwrite.global/create-application" -d '{
+            "name":"PR-${{ github.event.pull_request.number }}",
+            "dockerImage":"${{ env.REGISTRY }}/${{ env.repo_name }}/pr-${{ github.event.pull_request.number }}:latest",
+            "port": 7860
+          }')
           
+          echo "API Response: $RESPONSE"
+          
+          DOMAIN=$(echo $RESPONSE | jq -r '.domain')
+          
+          if [ "$DOMAIN" != "null" ]; then
+            echo "Deployed at: $DOMAIN"
+            echo "deploy_url=$DOMAIN" >> $GITHUB_ENV
+          else
+            echo "Failed to get domain!"
+            exit 1
+          fi
+
+    -  name: Comment PR with Deployment URL
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: "🚀 PR Deployed: [View Deployment](http://${{ env.deploy_url }})"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
