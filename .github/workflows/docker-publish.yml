@@ -65,6 +65,8 @@ jobs:
           echo "API Response: $RESPONSE"
           
           DOMAIN=$(echo $RESPONSE | jq -r '.domain')
+          APPLICATION_ID=$(echo $RESPONSE | jq -r '.applicationID')
+
           
           if [ "$DOMAIN" != "null" ]; then
             echo "Deployed at: $DOMAIN"
@@ -77,4 +79,4 @@ jobs:
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "Service ID: $APPLICATION_ID"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.TOKEN }}
