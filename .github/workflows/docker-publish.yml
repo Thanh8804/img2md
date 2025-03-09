@@ -66,8 +66,7 @@ jobs:
           
           DOMAIN=$(echo $RESPONSE | jq -r '.domain')
           APPLICATION_ID=$(echo $RESPONSE | jq -r '.applicationID')
-
-          
+          echo "APPLICATION_ID=$APPLICATION_ID" >> $GITHUB_ENV
           if [ "$DOMAIN" != "null" ]; then
             echo "Deployed at: $DOMAIN"
             echo "ApplicationID at: $APPLICATION_ID"
