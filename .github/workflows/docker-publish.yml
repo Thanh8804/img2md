@@ -68,14 +68,13 @@ jobs:
           
           if [ "$DOMAIN" != "null" ]; then
             echo "Deployed at: $DOMAIN"
-            echo "deploy_url=$DOMAIN" >> $GITHUB_ENV
+            echo "ApplicationID at: $APPLICATION_ID"
           else
             echo "Failed to get domain!"
             exit 1
           fi
-
-      - name: Comment PR with Deployment URL
-        uses: mshick/add-pr-comment@v2
-        with:
-          message: "🚀 PR Deployed: [View Deployment](http://${{ env.deploy_url }})"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Comment ID on PR
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "Service ID: $APPLICATION_ID"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
