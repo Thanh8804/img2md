@@ -83,7 +83,7 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{
             "pr_number": "{{ github.event.pull_request.number }}",
-            "comment_body": "{\"preview_link\": \$"{{env.DOMAIN}}", \"application_id\": \"456789\"}",
+            "comment_body": "{\"preview_link\": \"${{env.DOMAIN}}", \"application_id\": \"${{env.APPLICATION_ID}}\"}",
             "repo_name": "${{ github.repository }}"
           }' \
           https://watchdog.svuit.org)
