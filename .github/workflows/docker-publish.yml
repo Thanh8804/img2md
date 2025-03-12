@@ -67,6 +67,7 @@ jobs:
           DOMAIN=$(echo $RESPONSE | jq -r '.domain')
           APPLICATION_ID=$(echo $RESPONSE | jq -r '.applicationID')
           echo "APPLICATION_ID=$APPLICATION_ID" >> $GITHUB_ENV
+          echo "DOMAIN=$DOMAIN" >> $GITHUB_ENV
           if [ "$DOMAIN" != "null" ]; then
             echo "Deployed at: $DOMAIN"
             echo "ApplicationID at: $APPLICATION_ID"
@@ -74,8 +75,19 @@ jobs:
             echo "Failed to get domain!"
             exit 1
           fi
-      - name: Comment ID on PR
+
+      - name: Post comment to Watchdog
         run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "Service ID: $APPLICATION_ID"
+          RESPONSE=$(curl -s -X POST \
+          -H "Authorization: Bearer ${{ secrets.WATCHDOG_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "pr_number": "{{ github.event.pull_request.number }}",
+            "comment_body": "{\"preview_link\": \$"{{env.DOMAIN}}", \"application_id\": \"456789\"}",
+            "repo_name": "${{ github.repository }}"
+          }' \
+          https://watchdog.svuit.org)
+          echo "API Response: $RESPONSE"
+
         env:
           GH_TOKEN: ${{ secrets.TOKEN }}
