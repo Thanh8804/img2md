@@ -1,0 +1,32 @@
+name: Docker
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  delete-preview-deployment:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Get application ID of PR
+      run: |
+        RESPONSE = $(curl -X GET \
+        -H "Authorization: Bearer ${{ secrets.WATCHDOG_API_KEY }}" \
+        "https://watchdog.svuit.org/application_id?repo_name=SVUIT/img2md&pr_number=6")
+        echo "API Response: $RESPONSE"
+        echo "APPLICATION_ID=$RESPONSE" >> $GITHUB_ENV
+    - name: Call API to delete PR data
+      run: |
+        curl -X POST "http://your-dokploy-instance.com/api/application.delete" \
+          -H "Authorization: Bearer ${{secrets.TOKEN}}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "applicationId": ${{env.APPLICATION_ID}}
+          }'
+  delete-package:
+    - name: Delete GitHub Package
+      uses: paulushcgcj/delete-github-package@v1.0.0
+      with:
+        token: ${{ secrets.TOKEN }}
+        type: container
+        name: ${{github.repository.name}}%2F${{github.event.pull_request.number}}
+        version: 1.3.5-RC1
+        user: ${{ github.repository_owner }}
