@@ -14,7 +14,7 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.WATCHDOG_API_KEY }}" \
           "https://watchdog.svuit.org/application_id?repo_name=SVUIT/img2md&pr_number=6")
           echo "API Response: $RESPONSE"
-          APPLICATION_ID=$(echo "$RESPONSE" | jq -r '.application_Id')
+          APPLICATION_ID=$(echo "$RESPONSE" | jq -r '.application_id')
           echo "APPLICATION_ID=$APPLICATION_ID" >> $GITHUB_ENV
       - name: Call API to delete PR data
         run: |
