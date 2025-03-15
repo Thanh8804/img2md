@@ -6,6 +6,7 @@ jobs:
   delete-preview-deployment:
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Get application ID of PR
@@ -16,14 +17,14 @@ jobs:
           echo "API Response: $RESPONSE"
           APPLICATION_ID=$(echo "$RESPONSE" | jq -r '.application_id')
           echo "APPLICATION_ID=$APPLICATION_ID" >> $GITHUB_ENV
-      - name: Call API to delete PR data
+      - name: Call Appwrite API to delete application
         run: |
-          curl -X POST "https://dokploy.svuit.org/api/application.delete" \
-            -H "Authorization: Bearer ${{secrets.TOKEN}}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "applicationId": "${{env.APPLICATION_ID}}"
-            }'
+          RESPONSE=$(curl -s -X POST "https://67c6ca3b536c2f355774.appwrite.global/delete-application" -d '{
+            "application_id": $APPLICATION_ID
+          }')
+          
+          echo "Delete successful with response: $RESPONSE and application ID: $APPLICATION_ID"
+          
   delete-package:
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +33,7 @@ jobs:
           RESPONSE=$(curl -X DELETE \
           -H "Authorization: Bearer ${{secrets.TOKEN}}" \
           -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/users/Thanh8804/packages/container/img2md%2F${{ github.event.pull_request.number }}")
+          "https://api.github.com/users/Thanh8804/packages/container/img2md%2Fpr-${{ github.event.pull_request.number }}")
           echo "API Response: $RESPONSE"
           if echo "$RESPONSE" | jq -e .message >/dev/null 2>&1; then
             echo "Error: $(echo "$RESPONSE" | jq -r '.message')"
