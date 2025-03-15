@@ -8,8 +8,6 @@ name: Docker
 on:
   pull_request:
     branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -20,7 +18,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,10 +29,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into github registry 
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -45,15 +42,6 @@ jobs:
         id: convert_repo_name
         run: echo "##[set-output name=repo_name;]$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
 
-      # Set up the Appwrite CLI in the workflow
-      - name: Install Appwrite CLI
-        run: |
-          curl -sL https://appwrite.io/cli/install.sh | bash
-
-      - name: Login to Appwrite
-        run:
-          appwrite client --endpoint ${{ vars.APPWRITE_ENDPOINT }} --project-id ${{ vars.APPWRITE_PROJECT_ID }} --key ${{ secrets.APPWRITE_API_KEY }}
-
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -61,6 +49,46 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.convert_repo_name.outputs.repo_name }}:pr-${{ github.event.pull_request.number }}:latest
+          tags: ${{ env.REGISTRY }}/${{ steps.convert_repo_name.outputs.repo_name }}/pr-${{ github.event.pull_request.number }}:latest
           platforms: linux/amd64
+    
+      - name: Call Appwrite API to deploy
+        id: deploy
+        run: |
+          RESPONSE=$(curl -s -X POST "https://67c6ca3b536c2f355774.appwrite.global/create-application" -d '{
+            "name":"PR-${{ github.event.pull_request.number }}",
+            "dockerImage":"${{ env.REGISTRY }}/${{ steps.convert_repo_name.outputs.repo_name }}/pr-${{ github.event.pull_request.number }}:latest",
+            "port": 7860
+          }')
           
+          echo "API Response: $RESPONSE"
+          
+          DOMAIN=$(echo $RESPONSE | jq -r '.domain')
+          APPLICATION_ID=$(echo $RESPONSE | jq -r '.applicationID')
+          echo "APPLICATION_ID=$APPLICATION_ID" >> $GITHUB_ENV
+          echo "DOMAIN=$DOMAIN" >> $GITHUB_ENV
+          if [ "$DOMAIN" != "null" ]; then
+            echo "Deployed at: $DOMAIN"
+            echo "ApplicationID at: $APPLICATION_ID"
+          else
+            echo "Failed to get domain!"
+            exit 1
+          fi
+
+      - name: Post comment to Watchdog
+        run: |
+          RESPONSE=$(curl -s -X POST \
+          -H "Authorization: Bearer ${{ secrets.WATCHDOG_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "pr_number": 6,
+            "comment_body": "{\"preview_link\": \"http://${{env.DOMAIN}}\", \"application_id\": \"${{env.APPLICATION_ID}}\"}",
+            "repo_name": "SVUIT/img2md"
+          }' \
+          https://watchdog.svuit.org/comment_on_pr)
+          echo "API Response: $RESPONSE"
+
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN }}
+# "repo_name": "${{ github.repository }}"
+# "pr_number": {{ github.event.pull_request.number }},
