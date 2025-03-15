@@ -2,6 +2,9 @@ name: Docker
 on:
   pull_request:
     types: [closed]
+  push:
+    branches:
+      - main # Change to your main branch
 jobs:
   delete-preview-deployment:
     runs-on: ubuntu-latest
